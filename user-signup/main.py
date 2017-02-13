@@ -15,6 +15,8 @@
 # limitations under the License.
 #
 import webapp2
+import re
+
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
@@ -22,27 +24,27 @@ class MainHandler(webapp2.RequestHandler):
         
     def post(self):
         
-        correct = userval(self.request.get('username'))
-        alsocorrect = passval((self.request.get('passwd')),(self.request.get('verify')))
-        thirdlycorrect = userval(self.request.get('passwd'))
-        if correct and alsocorrect and thirdlycorrect:
+        uservalidated = userval(self.request.get('username'))
+        passwordmatch = passval((self.request.get('passwd')),(self.request.get('verify')))
+        passwordvalidated = userval(self.request.get('passwd'))
+        if uservalidated and passwordmatch and passwordvalidated:
 #            self.response.out.write(yes)
             self.redirect("/wel")
-        if not correct:
+        if not uservalidated:
             uvalfail = "That's not a valid username."
         else:
             uvalfail = ""
-        if not alsocorrect:
+        if not passwordmatch:
             matchfail = "Your password entries do not match."
         else:
             matchfail = ""
-        if not thirdlycorrect:
+        if not passwordvalidated:
             passwval = "That's not a valid password"
         else:
             passwval = ""
         self.write_form(uvalfail, passwval, matchfail)    
-#        if correct and alsocorrect and thirdlycorrect:
-#            self.response.out.write(yes)
+
+
     def write_form(self, uval="", pval="", mval =""):
         UN = self.request.get('username')
         self.response.out.write(SignupForm % {"ivuser": uval, "ivpass": pval, "nomatch": mval, "uname": UN})
@@ -61,9 +63,10 @@ no = "no"
 #        self.response.out.write(uver)
         
 
-import re
-user_re = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
+
+
 def userval(username):
+    user_re = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
     return user_re.match(username)
     
 def passval(passwd,verpass):
@@ -76,7 +79,7 @@ def passval(passwd,verpass):
        
 SignupForm = """
 <h3>Signup</h3>
-<form method="post" action='/wel'>
+<form method="post" action='/'>
     <label>
         Username
         <input name="username" value = "%(uname)s">
