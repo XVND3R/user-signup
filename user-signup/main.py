@@ -24,12 +24,17 @@ class MainHandler(webapp2.RequestHandler):
         
     def post(self):
         
-        uservalidated = userval(self.request.get('username'))
+        username = self.request.get('username')
+        
+        uservalidated = userval(username)
         passwordmatch = passval((self.request.get('passwd')),(self.request.get('verify')))
         passwordvalidated = userval(self.request.get('passwd'))
         if uservalidated and passwordmatch and passwordvalidated:
-#            self.response.out.write(yes)
-            self.redirect("/wel")
+            #UN = self.request.get('username')
+            #message = "Welcome, %s" % UN
+            #self.response.out.write(message)
+
+            self.redirect("/wel?username=" + username)
         if not uservalidated:
             uvalfail = "That's not a valid username."
         else:
@@ -50,18 +55,11 @@ class MainHandler(webapp2.RequestHandler):
         self.response.out.write(SignupForm % {"ivuser": uval, "ivpass": pval, "nomatch": mval, "uname": UN})
 
 class wpage(webapp2.RequestHandler):
-    def post(self):
+    def get(self):
         UN = self.request.get('username')
         message = "Welcome, %s" % UN
         self.response.out.write(message)
-    
-yes = "all good"
-no = "no"
-#class FormVerify(webapp2.RequestHandler):
-#    def post(self):
-#        uver = self.request.get("username")
-#        self.response.out.write(uver)
-        
+#        
 
 
 
